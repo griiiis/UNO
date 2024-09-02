@@ -1,0 +1,296 @@
+﻿@page
+@using Domain
+@using Microsoft.VisualStudio.TextTemplating
+@model WepApp.Pages.Play.IndexModel
+@{
+    ViewData["Title"] = "Uno Game";
+}
+<head>
+    <link rel="stylesheet" href="css/Cards.css">
+    <link rel="stylesheet" href="css/Table.css">
+</head>
+
+@{
+    var player = @Model.Engine.State.PlayerList.FindAll(pl => pl.Id == @Model.PlayerId)[0];
+    Console.WriteLine("Praegune ROUND: "+ Model.Engine.State.CurrentRound);
+    if (Model.Engine.State.CurrentRound == Model.Engine.GameSettings.NumberOfRounds + 1 || Model.Engine.CheckIfPlayerWonTheWholeGame(Model.Engine.State.PreviousPlayer))
+    {
+        <h3>GAME IS OVER!</h3>
+        <h3>THE WINNER IS @Model.Engine.FindWinnerByScore().ToUpper()!</h3>
+        <h4>Tulemused</h4>
+        foreach (var player1 in Model.Engine.State.PlayerList)
+        {
+            <div>@player1.Nickname : @player1.Points Points</div>
+        }
+
+        <a href="../Index">Back To Main</a>
+        return;
+    }
+}
+<h5>Reload page in <span id="reload-label">-</span></h5>
+<h1>UNO : Round @Model.Engine.State.CurrentRound</h1>
+@{
+    if (player == Model.Engine.GetActivePlayer())
+    {
+        <h4>@player.Nickname.ToUpper(), You are currently playing!</h4>
+    }
+    else
+    {
+        <h4>Active player: @Model.Engine.GetActivePlayer().Nickname, Your Name: @player.Nickname</h4>
+    }
+}
+
+@{
+    <h4>SCORE AND CARDS</h4>
+    foreach (var player1 in Model.Engine.State.PlayerList)
+    {
+        if (player1.Id != player.Id)
+        {
+            if (player1.HasSaidUno)
+            {
+                <div>@player1.Nickname : @player1.Points Points : @player1.UnoCards.Count Cards, Said UNO!</div>
+            }
+            else
+            {
+                <div>@player1.Nickname : @player1.Points Points : @player1.UnoCards.Count Cards</div>
+            }
+        }
+        else
+        {
+            <div>@player1.Nickname : @player1.Points Points</div>
+        }
+    }
+}
+<div>
+            Last Placed Card:
+            @if (Model.Engine.State.DiscardPile.Last().ECardType == ECardType.Wild 
+                 || Model.Engine.State.DiscardPile.Last().ECardType == ECardType.WildDrawFour)
+            {
+                <div>Next Card Color: @Model.Engine.State.DiscardPile.Last().ECardColor</div>
+            }
+            <div id="div2">
+                @Html.Raw(Model.LastDiscardCard(Model.Engine.State.DiscardPile.Last()))
+            </div>
+        </div>
+
+<main>
+    @if (@Model.Engine.GetActivePlayer().Id == Model.PlayerId)
+    {
+        if (Model.Engine.State.PlayerSkipped) //Skipped
+        {
+            <div>You Are Skipped!</div>
+            <div>Your Hand:</div>
+            @foreach (var card in player.UnoCards)
+            {
+                @Html.Raw(Model.LastDiscardCard(card))
+            }
+            <a asp-route-gameId="@Model.GameId" asp-route-Skipped="1" asp-route-PlayerId="@Model.PlayerId" class="btn btn-info">Finish Your Move</a>
+            return;
+        }
+
+        if (Model.Engine.State.PlayerDrawTwo) //DrawTwo
+        {
+            <div>You Get Extra 2 Cards!</div>
+            <div>Your Hand:</div>
+            @foreach (var card in player.UnoCards)
+            {
+                @Html.Raw(Model.LastDiscardCard(card))
+            } @foreach (var card in Model.Engine.State.RandomizedCards.Take(2).ToList())
+            {
+                @Html.Raw(Model.LastDiscardCard(card))
+            }
+
+            <a asp-route-gameId="@Model.GameId" asp-route-TwoCards="1" asp-route-PlayerId="@Model.PlayerId" class="btn btn-info">Finish Your Move</a>
+            return;
+        }
+
+        if (Model.Engine.State.PlayerDrawFour)
+        {
+            <div>You Get Extra 4 Cards!</div>
+            <div>Your Hand:</div>
+            @foreach (var card in player.UnoCards)
+            {
+                @Html.Raw(Model.LastDiscardCard(card))
+            } @foreach (var card in Model.Engine.State.RandomizedCards.Take(4).ToList())
+            {
+                @Html.Raw(Model.LastDiscardCard(card))
+            }
+
+            <a asp-route-gameId="@Model.GameId" asp-route-FourCards="1" asp-route-PlayerId="@Model.PlayerId" class="btn btn-info">Finish Your Move</a>
+            return;
+        }
+
+        //<div>Eelmine mängija: @Model.Engine.State.PreviousPlayer.Nickname</div>
+        
+        @if (!player.NewCardTaken)
+        {
+            <a asp-route-gameId="@Model.GameId" asp-route-NewCard="1" asp-route-PlayerId="@Model.PlayerId" class="btn btn-info">Take New Card</a>
+        } @if (!player.WrongUno && Model.Engine.State.GameSettings.MustSayUno)
+        {
+            <a asp-route-gameId="@Model.GameId" asp-route-SaidUno="1" asp-route-PlayerId="@Model.PlayerId" class="btn btn-info">UNO</a>
+        } @if (@Model.Engine.State.PreviousPlayer.UnoCards.Count == 1 && Model.Engine.State.GameSettings.MustSayUno)
+        {
+            <a asp-route-gameId="@Model.GameId" asp-route-ChallengePlayer="1" asp-route-PlayerId="@Model.PlayerId" class="btn btn-info">Challenge</a>
+        }
+
+        <a asp-route-gameId="@Model.GameId" asp-route-FinishMove="1" asp-route-PlayerId="@Model.PlayerId" class="btn btn-info">Finish Your Move</a>
+
+        <p></p>
+        <div>Your Hand:</div>
+        var cardId = 0;
+        @foreach (var card in Model.Engine.GetActivePlayer().UnoCards)
+        {
+            cardId++;
+            var cardIntVal = (int)card.ECardType;
+            if (cardIntVal <= 9)
+            {
+                var cardClass = "card num-" + cardIntVal + " " + card.ECardColor;
+                if (Model.Engine.CheckIfCardIsAcceptable(cardId))
+                {
+                    <a asp-page="Index" asp-route-gameId="@Model.GameId" asp-route-CardId="@cardId" asp-route-PlayerId="@Model.PlayerId">
+                        <div class="@cardClass">
+                            <div class="inner">
+                                <div class="mark">@cardIntVal</div>
+                            </div>
+                        </div>
+                    </a>
+                }
+                else
+                {
+                    <div class="@cardClass unselectable">
+                        <div class="inner">
+                            <div class="mark">@cardIntVal</div>
+                        </div>
+                    </div>
+                }
+            }
+            else if (card.ECardType == ECardType.Skip)
+            {
+                var cardClass = "card num-skip " + card.ECardColor;
+                if (Model.Engine.CheckIfCardIsAcceptable(cardId))
+                {
+                    <a asp-page="Index" asp-route-gameId="@Model.GameId" asp-route-CardId="@cardId" asp-route-PlayerId="@Model.PlayerId">
+                        <div class="@cardClass">
+                            <div class="inner">
+                                <div class="skip">⦸</div>
+                            </div>
+                        </div>
+                    </a>
+                }
+                else
+                {
+                    <div class="@cardClass unselectable">
+                        <div class="inner">
+                            <div class="skip">⦸</div>
+                        </div>
+                    </div>
+                }
+            }
+            else if (card.ECardType == ECardType.DrawTwo)
+            {
+                var cardClass = "card num-drawTwo " + card.ECardColor;
+                if (Model.Engine.CheckIfCardIsAcceptable(cardId))
+                {
+                    <a asp-page="Index" asp-route-gameId="@Model.GameId" asp-route-CardId="@cardId" asp-route-PlayerId="@Model.PlayerId">
+                        <div class="@cardClass">
+                            <div class="inner">
+                                <div class="drawTwo">
+                                    <img src=https://uno-cards.vercel.app/assets/twocards-7eb808bd.svg>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                }
+                else
+                {
+                    <div class="@cardClass unselectable">
+                        <div class="inner">
+                            <div class="drawTwo">
+                                <img src=https://uno-cards.vercel.app/assets/twocards-7eb808bd.svg>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else if (card.ECardType == ECardType.Reverse)
+            {
+                var cardClass = "card num-reverse " + card.ECardColor;
+                if (Model.Engine.CheckIfCardIsAcceptable(cardId))
+                {
+                    <a asp-page="Index" asp-route-gameId="@Model.GameId" asp-route-CardId="@cardId" asp-route-PlayerId="@Model.PlayerId">
+                        <div class="@cardClass">
+                            <div class="inner">
+                                <div class="reverse">
+                                    <img src=https://uno-cards.vercel.app/assets/twocards-7eb808bd.svg>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                }
+                else
+                {
+                    <div class="@cardClass unselectable">
+                        <div class="inner">
+                            <div class="reverse">
+                                <img src=https://uno-cards.vercel.app/assets/twocards-7eb808bd.svg>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else if (card.ECardType == ECardType.Wild)
+            {
+                <div class="card">
+                    <div class="inner">
+                        <img src=lib/wildCard.PNG width=105px height=165px>
+                    </div>
+                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                        <a asp-route-Color=0 asp-route-gameId="@Model.GameId" asp-route-CardId="@cardId" asp-route-PlayerId="@Model.PlayerId" class="btn btn-danger">Punane</a>
+                        <a asp-route-Color=1 asp-route-gameId="@Model.GameId" asp-route-CardId="@cardId" asp-route-PlayerId="@Model.PlayerId" class="btn btn-warning">Kollane</a>
+                        <a asp-route-Color=2 asp-route-gameId="@Model.GameId" asp-route-CardId="@cardId" asp-route-PlayerId="@Model.PlayerId" class="btn btn-success">Roheline</a>
+                        <a asp-route-Color=3 asp-route-gameId="@Model.GameId" asp-route-CardId="@cardId" asp-route-PlayerId="@Model.PlayerId" class="btn btn-primary">Sinine</a>
+                    </div>
+                </div>
+            }
+
+
+            else
+            {
+                <div class="card">
+                    <div class="inner">
+                        <img src=lib/wildCard+4.PNG width=105px height=165px>
+                    </div>
+                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                        <a asp-route-Color=0 asp-route-gameId="@Model.GameId" asp-route-CardId="@cardId" asp-route-PlayerId="@Model.PlayerId" class="btn btn-danger">Punane</a>
+                        <a asp-route-Color=1 asp-route-gameId="@Model.GameId" asp-route-CardId="@cardId" asp-route-PlayerId="@Model.PlayerId" class="btn btn-warning">Kollane</a>
+                        <a asp-route-Color=2 asp-route-gameId="@Model.GameId" asp-route-CardId="@cardId" asp-route-PlayerId="@Model.PlayerId" class="btn btn-success">Roheline</a>
+                        <a asp-route-Color=3 asp-route-gameId="@Model.GameId" asp-route-CardId="@cardId" asp-route-PlayerId="@Model.PlayerId" class="btn btn-primary">Sinine</a>
+                    </div>
+                </div>
+            }
+        }
+    }
+    else
+    {
+        <div>Your Hand:</div>
+        @foreach (var card in player.UnoCards)
+        {
+            @Html.Raw(Model.LastDiscardCard(card))
+        }
+
+
+        <script>
+       
+        let timerValue = 2;
+        let timerLabel = document.querySelector("#reload-label");
+   
+        setInterval(() => {
+            timerValue--;
+            timerLabel.innerHTML = timerValue.toString();
+            if (timerValue <= 0){
+                window.location.reload();
+            }
+        }, 1000);
+    </script>
+    }
+</main >

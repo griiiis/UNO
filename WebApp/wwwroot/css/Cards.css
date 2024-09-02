@@ -1,0 +1,232 @@
+﻿
+@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:900);
+
+.card {
+    float:left;
+    background:#fff;
+    border-radius:5px;
+    padding:5px;
+    margin:10px;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size:100px;
+    text-shadow:
+            1px  1px 0 #000000,
+            -1px -1px 0 #000000,
+            -1px  1px 0 #000000,
+            1px -1px 0 #000000,
+            1px  0   0 #000000,
+            -1px  0   0 #000000,
+            0   -1px 0 #000000,
+            0    1px 0 #000000,
+            4px  4px 0 #000000;
+    box-shadow:0 0 10px #aaaaaa;
+    text-align:center;
+    position:relative;
+    display: inline-block;
+}
+.card .inner{
+    vertical-align:middle;
+    height:165px
+}
+
+.card .mark{
+    z-index: 1;
+    display:inline-block;
+    vertical-align:middle;
+    background:#ffffff;
+    margin:auto;
+    padding:0 26px;
+    border-radius:100px 60px / 120px 60px;
+    line-height:1.4;
+}
+
+.card:before,
+.card:after{
+    display:inline-block;
+    position:absolute;
+    line-height:0;
+    font-size:20px;
+    color:#ffffff;
+    text-shadow:
+            1px  1px 0 #000000,
+            -1px -1px 0 #000000,
+            -1px  1px 0 #000000,
+            1px -1px 0 #000000,
+            1px  0   0 #000000,
+            -1px  0   0 #000000,
+            0   -1px 0 #000000,
+            0    1px 0 #000000,
+            2px  2px 0 #000000;
+}
+
+.card:before{
+    top:15px;
+    left:10px;
+}
+.card:after{
+    bottom:15px;
+    right:10px;
+}
+
+.card.Blue{
+    color:#0063B3;
+}
+
+.card.Blue .inner{
+    background:#0063B3;
+}
+
+.card.Green{
+    color:#18A849;
+}
+
+.card.Green .inner{
+    background:#18A849;
+}
+
+.card.Red{
+    color:#C72A18;
+}
+
+.card.Red .inner{
+    background:#C72A18;
+}
+
+.card.Yellow{
+    color:#E6CA1E;
+}
+
+.card.Yellow .inner{
+    background:#E6CA1E;
+}
+
+.card.num-0:before,
+.card.num-0:after{
+    content:"0";
+}
+
+.card.num-1:before,
+.card.num-1:after{
+    content:"1";
+}
+
+.card.num-2:before,
+.card.num-2:after{
+    content:"2";
+}
+
+.card.num-3:before,
+.card.num-3:after{
+    content:"3";
+}
+
+.card.num-4:before,
+.card.num-4:after{
+    content:"4";
+}
+
+
+.card.num-5:before,
+.card.num-5:after{
+    content:"5";
+}
+
+.card.num-6:before,
+.card.num-6:after{
+    content:"6";
+}
+
+.card.num-7:before,
+.card.num-7:after{
+    content:"7";
+}
+
+.card.num-8:before,
+.card.num-8:after{
+    content:"8";
+}
+
+.card.num-9:before,
+.card.num-9:after{
+    content:"9";
+}
+
+.card.num-skip:before,
+.card.num-skip:after{
+    content:"⦸";
+}
+
+.card.num-drawTwo:before,
+.card.num-drawTwo:after{
+    content:"+2";
+}
+
+.card.num-reverse:before {
+    content: url("https://uno-cards.vercel.app/assets/arrows-d71232e2.svg");
+    width: 15px;
+}
+.card.num-reverse:after {
+    content: url("https://uno-cards.vercel.app/assets/arrows-d71232e2.svg");
+    width: 17px;
+    height: 30px;
+}
+
+.skip {
+    z-index: 1;
+    display:inline-block;
+    vertical-align:middle;
+    background:#ffffff;
+    margin:auto;
+    padding:0 4px;
+    border-radius:100px 60px / 120px 60px;
+    line-height:1.4;
+}
+
+.card.num-drawTwo.Yellow .inner img, .card.num-reverse.Yellow .inner img {
+    filter: brightness(0) invert(1) sepia(1) saturate(10000%) hue-rotate(-20deg);
+}
+.card.num-drawTwo.Red .inner img, .card.num-reverse.Red .inner img {
+    filter: invert(21%) sepia(39%) saturate(7450%) hue-rotate(340deg) brightness(82%) contrast(87%);
+
+}
+.card.num-drawTwo.Green .inner img, .card.num-reverse.Green .inner img {
+    filter: invert(41%) sepia(100%) saturate(1482%) hue-rotate(100deg) brightness(94%) contrast(81%)
+}
+.card.num-drawTwo.Blue .inner img, .card.num-reverse.Blue .inner img{
+    filter: invert(23%) sepia(56%) saturate(2828%) hue-rotate(170deg) brightness(100%) contrast(101%)
+}
+
+.drawTwo {
+    z-index: 1;
+    display:inline-block;
+    vertical-align:middle;
+    background:#ffffff;
+    margin:auto;
+    padding:0 23px;
+    border-radius:100px 60px / 120px 60px;
+    line-height:1.4;
+}
+
+.reverse {
+    z-index: 1;
+    display:inline-block;
+    vertical-align:middle;
+    background:#ffffff;
+    margin:auto;
+    padding:0 23px;
+    border-radius:100px 60px / 120px 60px;
+    line-height:1.4;
+}
+
+.unselectable {
+    opacity: 50%;
+}
+
+.btn-warning{color:#fff;background-color:#ffc107;border-color:#ffc107}
+.btn-group, .btn-group-vertical {
+    position: relative;
+    display: inline-flex;
+    vertical-align: middle;
+    flex-direction: column;
+    flex-wrap: wrap;
+}

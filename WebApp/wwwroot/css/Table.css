@@ -1,0 +1,20 @@
+﻿#div2, #div1 {
+    position: relative; /* Kindlasti kasutage position:relative, absolute või fixed, et z-index töötaks */
+    width: 150px;
+    height: 200px;
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid black;
+    z-index: 9999; /* Näiteks võib proovida väga kõrget väärtust, et kindlustada kõrgeim kiht */
+}
+
+body > div {
+    max-width: 80%;
+    
+    display: grid;
+    gap: .2rem;
+    
+    grid-template-columns: 1fr;
+    grid-template-rows: 2rem calc(100vh - 5rem) 2rem;
+    grid-template-areas: "main main main";
+}

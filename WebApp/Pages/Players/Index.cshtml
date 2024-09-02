@@ -1,0 +1,43 @@
+@page
+@model WepApp.Pages_Players.IndexModel
+
+@{
+    ViewData["Title"] = "Players";
+}
+
+<h1>Players</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Player[0].NickName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Player[0].PlayerType)
+            </th>
+            <th>
+                Id
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Player) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.NickName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PlayerType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GameId)
+            </td>
+            <td>
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

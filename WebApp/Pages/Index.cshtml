@@ -1,0 +1,51 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">UNO</h1>
+</div>
+
+<hr/>
+
+<h3>There is @Model.Count saved games in DataBase!</h3>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Game[0].CreatedAtDt)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Game[0].UpdatedAtDt)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Game[0].Players)
+        </th>
+            
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.Game) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAtDt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdatedAtDt)
+            </td>
+            <td>
+                @item.Players!.Count Players - 
+                @foreach (var player in item.Players)
+                {
+                    var playerLabel = player.NickName + " (" + player.PlayerType + ")";
+                    <a asp-page="/Play/Index" asp-route-gameId="@item.Id" asp-route-playerId="@player.Id">@playerLabel</a>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

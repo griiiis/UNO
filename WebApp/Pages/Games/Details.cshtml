@@ -1,0 +1,41 @@
+@page
+@using Domain.Database
+@model WepApp.Pages_Games.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Game</h4>
+    <hr/>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Game.CreatedAtDt)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Game.CreatedAtDt)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Game.UpdatedAtDt)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Game.UpdatedAtDt)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayName(Model.Game.Players!.Count.ToString()) Players
+        </dt>
+        <dd class="col-sm-10">
+            @foreach (var player in Model.Game.Players!)
+            {
+                var playerLabel = player.NickName + "(" + player.PlayerType + ") ";
+                @Html.DisplayName(playerLabel)
+            }
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Index">Back</a>
+</div>

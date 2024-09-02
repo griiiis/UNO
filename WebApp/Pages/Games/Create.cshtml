@@ -1,0 +1,115 @@
+@page
+@model WepApp.Pages_Games.CreateModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Game</h4>
+<hr/>
+@{
+    if (Model.PlayerCount == null)
+    {
+        <div class="row">
+            <div class="col-md-4">
+                <form method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label name="PlayerCount" class="control-label">How many players? </label>
+                        <select name="SelectedPlayerCount">
+                            <option value="2" selected="selected">2 Players</option>
+                            <option value="3">3 Players</option>
+                            <option value="4">4 Players</option>
+                            <option value="5">5 Players</option>
+                            <option value="6">6 Players</option>
+                            <option value="7">7 Players</option>
+                            <option value="8">8 Players</option>
+                            <option value="9">9 Players</option>
+                            <option value="10">10 Players</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Continue" class="btn btn-primary"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+        return;
+    }
+
+    if (Model.Players != null && Model.Players.Count < 2)
+    {
+        <div class="row">
+            <div class="col-md-4">
+                <form method="post">
+                    @for (int i = 0; i < int.Parse(Model.PlayerCount); i++)
+                    {
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label class="control-label">Player Name</label>
+                            <input name="FirstName" type="text" placeholder="Name"> <br>
+                        </div>
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label class="control-label">Player Name</label>
+                            <select name="PlayerType">
+                                <option value="1" selected="selected">Human</option>
+                                <option value="2">AI</option>
+                            </select>
+                        </div>
+                        <p></p>
+                    }
+
+
+                    <h4>Game Settings</h4>
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label class="control-label">Number of Rounds</label>
+                        <input name="NumberOfRounds" type="number" min="1" max="10" value="3"> <br>
+                    </div>
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label class="control-label">Points To Win</label>
+                        <input name="PointsToWin" type="number" min="1" max="5000" value="500"> <br>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Hand Size</label>
+                        <select name="HandSize">
+                            <option value="2">2 Cards</option>
+                            <option value="3">3 Cards</option>
+                            <option value="4">4 Cards</option>
+                            <option value="5">5 Cards</option>
+                            <option value="6">6 Cards</option>
+                            <option value="7" selected="selected">7 Cards</option>
+                            <option value="8">8 Cards</option>
+                            <option value="9">9 Cards</option>
+                            <option value="10">10 Cards</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Must Say UNO</label>
+                        <select name="MustSayUno">
+                            <option value="1" selected="selected">True</option>
+                            <option value="0">False</option>
+                        </select>
+                    </div>
+                    <p></p>
+                    <div class="form-group">
+                        <input type="submit" value="START GAME" class="btn btn-primary"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+        return;
+    }
+}
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
